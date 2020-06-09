@@ -4,14 +4,16 @@ import Cookies from 'js-cookie';
 
 const Context = React.createContext(); 
 
+/**
+ * The Context class that will be used through out the program.
+ * This class use the functions from Data.js
+ */
 export class Provider extends Component {
 
   state = {
     authenticatedUser: Cookies.getJSON('authenticatedUser') || null,
-    //password: null,
     token: Cookies.getJSON('token') || null,
   };
-//Cookies.getJSON('authenticatedUser')
 
   constructor() {
     super();
@@ -37,27 +39,22 @@ export class Provider extends Component {
     );
   }
 
-  
+  /**
+   * SignIn function that will be used in UserSignIn.js
+   */
   signIn = async (emailAddress,pass) => {
     const user = await this.data.getUser(emailAddress,pass);
-    //console.log(user);
     if (user !== null) {
-        //console.log("setting state");
         const tk =  Buffer.from(`${user.data.emailAddress}:${pass}`, 'utf8').toString('base64');
       this.setState( {
         authenticatedUser: user.data,
         token: tk,
       });
       // Set cookie
-      //console.log("setting cookies");
       Cookies.set('authenticatedUser',JSON.stringify(user.data), { expires: 1 });
       Cookies.set('token',JSON.stringify(tk), { expires: 1 });
-      //console.log(tk);
 
     }
-
-    //console.log("User in context: " +this.state.authenticatedUser);
-    //console.log("password in context : " + this.state.password);
     return user;
   }
 

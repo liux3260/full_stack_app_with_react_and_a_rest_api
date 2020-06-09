@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 
 export default ({context})=>{
   
-    //const { context } = this.props;
   const authUser = context.authenticatedUser;
 
   return (

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 //import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+
 export default class updatedCourse extends Component {
 
     constructor(props) {
@@ -20,26 +21,15 @@ export default class updatedCourse extends Component {
           };
     
         this.handleChange = this.handleChange.bind(this);
-        this.handleClick = this.handleClick.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
       }
-/*
-  getCoursebyId= (id)=>{
-    axios.get(`http://localhost:5000/api/courses/${id}`)
-    .then(response => {
-      this.setState({
-        course:response.data
-      });
-    })
-    .catch(error => {
-      console.log('Error updating data', error);
-    });
-  }*/
 
+      /**
+       * An async function that create the course in the database
+       */
   createCoursebyId= async()=>{
     const { context } = this.props;
-    //console.log(context.authenticatedUser);
-    //console.log(context.password);
     await axios.post(`http://localhost:5000/api/courses`,{
         description: this.state.course.description,
         estimatedTime: this.state.course.estimatedTime,
@@ -52,7 +42,7 @@ export default class updatedCourse extends Component {
           }
     })
     .then(response => {
-        console.log(response);
+      this.props.history.push("/");
       })
     .catch(error => {
         if(error.response.status ===500){
@@ -61,15 +51,14 @@ export default class updatedCourse extends Component {
         this.setState({ 
             errors:  error.response.data.errors
         });
-      console.log('Error updating data', error.response.data.errors);
     });
   }
-/*
-  componentDidMount(){
-    const id = this.props.match.params.id;
-    this.getCoursebyId(id);
-  }*/
 
+
+  /**
+   * Event handler that handles the changes in the textbox
+   * @param event 
+   */
   handleChange(event) {
       const updatedCourse = this.state.course;
       const id = event.target.id;
@@ -77,29 +66,31 @@ export default class updatedCourse extends Component {
     this.setState({course: updatedCourse});
   }
 
-  handleClick(event){
+  /**
+   * Event handler that handles the calcel button
+   * @param event 
+   */
+  handleCancel(event){
     event.preventDefault();
-    //console.log(this.state.searchText);
     let path = `/`;
     this.props.history.push(path);
   }
 
+  /**
+   * Event handler that handles the create button
+   * @param  event 
+   */
   handleCreate(event){
     event.preventDefault();
-    //console.log(this.state.searchText);
     this.createCoursebyId();
-    //let path = `/courses/${this.state.course.id}/update`;
-    //this.props.history.push(path);
   }
 
   render() {
-      console.log(this.state.course);
       const errorList = this.state.errors.map((error)=>
         <li>{error}</li>
     );
 
     return (
-        //<div className="bounds course--detail"></div>
 
         <div className="bounds course--detail">
             <h1>Create Course</h1>
@@ -148,7 +139,7 @@ export default class updatedCourse extends Component {
                 </div>
                 <div className="grid-100 pad-bottom">
                     <button className="button" type="submit" onClick={this.handleCreate}>Create Course</button>
-                    <button className="button button-secondary" onClick={this.handleClick}>Cancel</button>
+                    <button className="button button-secondary" onClick={this.handleCancel}>Cancel</button>
                 </div>
             </form>
             </div>

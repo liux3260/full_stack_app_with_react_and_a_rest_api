@@ -14,7 +14,6 @@ export default class Courses extends Component {
       this.setState({
         courses:response.data
       });
-      //console.log(response.data);
     })
     .catch(error => {
         if(error.response.status ===500){
@@ -34,7 +33,6 @@ export default class Courses extends Component {
   }
 
   render() {
-      //console.log(this.state.courses[0]);
     const courseList = this.state.courses.map((course)=>
         <div className="grid-33" key = {course['id']}>
             <React.Fragment>

@@ -28,8 +28,6 @@ export default class updatedCourse extends Component {
     const { context } = this.props;
     await axios.get(`http://localhost:5000/api/courses/${id}`)
     .then(response => {
-        console.log("Course user id: " +response.data.User.id);
-        console.log("authenticated user id: " + context.authenticatedUser.id);
         if(!response.data){
             this.props.history.push("/notfound");
         }
@@ -41,8 +39,7 @@ export default class updatedCourse extends Component {
       });
     })
     .catch(error => {
-      console.log(error);
-      if(error.response.status ===500){
+      if(error.response && error.response.status ===500){
         this.props.history.push("/error");
         }
         else{
@@ -53,25 +50,19 @@ export default class updatedCourse extends Component {
 
   updateCoursebyId= async(id)=>{
     const { context } = this.props;
-    console.log(context.authenticatedUser.emailAddress);
-    console.log(context.token);
     await axios.put(`http://localhost:5000/api/courses/${id}`,{
         description: this.state.course.description,
         estimatedTime: this.state.course.estimatedTime,
         id: this.state.course.id,
         materialsNeeded: this.state.course.materialsNeeded,
         title: this.state.course.title,
-    },{/*
-        auth:{
-            username:context.authenticatedUser.emailAddress,
-            password:context.password,
-        }*/
+    },{
         headers: {
             'Authorization': `Basic ${context.token}`
           }
     })
     .then(response => {
-        console.log(response);
+      this.props.history.push("/");
       })
     .catch(error => {
         if(error.response.status ===500){
@@ -80,16 +71,13 @@ export default class updatedCourse extends Component {
         this.setState({ 
             errors:  error.response.data.errors
         });
-        console.log('Error updating data', error.response.data.errors);
     });
   }
 
   componentDidMount(){
     const id = this.props.match.params.id;
     this.getCoursebyId(id);
-    //if(!context.authenticatedUser || context.authenticatedUser.id!=this.state.course.User.id){
-        //this.props.history.push("/forbidden");
-    //}
+
   }
 
   handleChange(event) {
@@ -101,31 +89,21 @@ export default class updatedCourse extends Component {
 
   handleClick(event){
     event.preventDefault();
-    //console.log(this.state.searchText);
     let path = `/courses/${this.state.course.id}`;
     this.props.history.push(path);
   }
 
   handleUpdate(event){
     event.preventDefault();
-    //console.log(this.state.searchText);
     this.updateCoursebyId(this.state.course.id);
-    //let path = `/courses/${this.state.course.id}/update`;
-    //this.props.history.push(path);
   }
 
   render() {
-      console.log(this.state.course);
-      //console.log("Course user id: " +this.state.course.User.id);
-    //const { context } = this.props;
-    //console.log("authenticated user id: " + context.authenticatedUser.id);
-
       const errorList = this.state.errors.map((error)=>
         <li>{error}</li>
     );
 
     return (
-        //<div className="bounds course--detail"></div>
         <div className="bounds course--detail">
         <h1>Update Course</h1>
         {this.state.errors.length>0 

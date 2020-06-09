@@ -16,14 +16,11 @@ export default class UserSignUp extends Component {
             confirmPassword:''
           };
     
-        this.change = this.change.bind(this);
-        this.submit = this.submit.bind(this);
-        this.cancel = this.cancel.bind(this);
-        //this.signIn = this.signIn.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCancel = this.handleCancel.bind(this);
     }
 
-
-      //Cookies.getJSON('authenticatedUser') |
   render() {
     const {
         emailAddress,
@@ -34,8 +31,8 @@ export default class UserSignUp extends Component {
       confirmPassword
     } = this.state;
 
-    const errorList = this.state.errors.map((error)=>
-        <li>{error}</li>
+    const errorList = this.state.errors.map((error,index)=>
+        <li key ={index}>{error} </li>
     );
 
     return (
@@ -58,25 +55,25 @@ export default class UserSignUp extends Component {
             }
           <div>
             <form>
-              <div><input id="firstName" name="firstName" type="text" className="" placeholder="First Name" value={firstName} onChange={this.change} /></div>
-              <div><input id="lastName" name="lastName" type="text" className="" placeholder="Last Name" value={lastName} onChange={this.change} /></div>
-              <div><input id="emailAddress" name="emailAddress" type="text" className="" placeholder="Email Address" value={emailAddress} onChange={this.change} /></div>
-              <div><input id="password" name="password" type="password" className="" placeholder="Password" value={password} onChange={this.change} /></div>
+              <div><input id="firstName" name="firstName" type="text" className="" placeholder="First Name" value={firstName} onChange={this.handleChange} /></div>
+              <div><input id="lastName" name="lastName" type="text" className="" placeholder="Last Name" value={lastName} onChange={this.handleChange} /></div>
+              <div><input id="emailAddress" name="emailAddress" type="text" className="" placeholder="Email Address" value={emailAddress} onChange={this.handleChange} /></div>
+              <div><input id="password" name="password" type="password" className="" placeholder="Password" value={password} onChange={this.handleChange} /></div>
               <div><input id="confirmPassword" name="confirmPassword" type="password" className="" placeholder="Confirm Password"
-                  value={confirmPassword} onChange={this.change} /></div>
+                  value={confirmPassword} onChange={this.handleChange} /></div>
               <div className="grid-100 pad-bottom">
-                <button className="button" type="submit" onClick ={this.submit}>Sign Up</button>
-                <button className="button button-secondary" onClick={this.cancel}>Cancel</button></div>
+                <button className="button" type="submit" onClick ={this.handleSubmit}>Sign Up</button>
+                <button className="button button-secondary" onClick={this.handleCancel}>Cancel</button></div>
             </form>
           </div>
           <p>&nbsp;</p>
-          <p>Already have a user account? <Link to="/signup">Click here</Link> to sign in!</p>
+          <p>Already have a user account? <Link to="/signin">Click here</Link> to sign in!</p>
         </div>
       </div>
     );
   }
 
-  change = (event) => {
+  handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
 
@@ -88,13 +85,13 @@ export default class UserSignUp extends Component {
     //console.log(this.state);
   }
 
-  submit = (event) => {
+  handleSubmit = (event) => {
     event.preventDefault();
     this.createUser();
 
   }
 
-  cancel = (event) => {
+  handleCancel = (event) => {
     event.preventDefault();
     this.props.history.push('/');
   }
@@ -108,7 +105,8 @@ export default class UserSignUp extends Component {
             password: this.state.password,
         })
         .then(response => {
-            console.log(response);
+            //console.log(response);
+            this.props.history.goBack();
         })
         .catch(error => {
             if(error.response.status ===500){
@@ -117,11 +115,11 @@ export default class UserSignUp extends Component {
             this.setState({ 
                 errors:  error.response.data.errors
             });
-            console.log('Error creating user', error.response.data.errors);
+            //console.log('Error creating user', error.response.data.errors);
         });
   }
   else{
-      console.error("Passwords doesn't match");
+      //console.error("Passwords doesn't match");
       this.setState(() => {
         return { errors: [ "Passwords doesn't match" ] };
       });

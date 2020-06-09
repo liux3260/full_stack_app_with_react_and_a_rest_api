@@ -29,12 +29,14 @@ export default class CourseDetail extends Component {
   getCoursebyId= (id)=>{
     axios.get(`http://localhost:5000/api/courses/${id}`)
     .then(response => {
+      if(!response.data){
+        this.props.history.push("/notfound");
+      }
       this.setState({
         course:response.data
       });
     })
     .catch(error => {
-      //console.log('Error updating data', error.response.data.errors);
       if(error.response.status ===500){
         this.props.history.push("/error");
     }
@@ -46,7 +48,6 @@ export default class CourseDetail extends Component {
 
   deleteCoursebyId= async (id)=>{
     const { context } = this.props;
-    console.log(context.authenticatedUser);
     await axios.delete(`http://localhost:5000/api/courses/${id}`,
     {
         headers: {
@@ -54,7 +55,6 @@ export default class CourseDetail extends Component {
           }
     })
     .then(response => {
-        console.log(response.data);
         this.props.history.push("/");
     })
     .catch(error => {
@@ -79,30 +79,23 @@ export default class CourseDetail extends Component {
 
   handleClick(event){
     event.preventDefault();
-    //console.log(this.state.searchText);
     let path = `/`;
     this.props.history.push(path);
   }
 
   handleUpdate(event){
     event.preventDefault();
-    //console.log(this.state.searchText);
     let path = `/courses/${this.state.course.id}/update`;
     this.props.history.push(path);
   }
 
   handleDelete(event){
-    //event.preventDefault();
-    //console.log(this.state.searchText);
     this.deleteCoursebyId(this.state.course.id);
-    //let path = `/`;
-    //this.props.history.push(path);
+
   }
 
   render() {
-      //console.log("Course user id: " +this.state.course.User.id);
       const { context } = this.props;
-      //console.log("authenticated user id: " + context.authenticatedUser.id);
       let materialsList;
       if(this.state.course && this.state.course.materialsNeeded){
         materialsList = this.state.course.materialsNeeded.split("\n");
@@ -112,11 +105,10 @@ export default class CourseDetail extends Component {
       }
 
     return (
-        //<div className="bounds course--detail"></div>
         <div>
             <div className="actions--bar">
             <div className="bounds">
-                {context.authenticatedUser && context.authenticatedUser.id===this.state.course.User.id
+                {context.authenticatedUser && this.state.course && context.authenticatedUser.id===this.state.course.User.id
                 ?
                 <div className="grid-100">
                     <button className="button" onClick={this.handleUpdate}>Update Course</button>
@@ -136,12 +128,12 @@ export default class CourseDetail extends Component {
 
                 <div className="course--header">
                 <h4 className="course--label">Course</h4>
-                <h3 className="course--title">{this.state.course.title}</h3>
-                <p>By {`${this.state.course.User.firstName} ${this.state.course.User.lastName}`}</p>
+                <h3 className="course--title">{this.state.course ? this.state.course.title : ""}</h3>
+                <p>By {`${this.state.course? this.state.course.User.firstName : ""} ${this.state.course ? this.state.course.User.lastName : ""}`}</p>
                 </div>
 
                 <div className="course--description">
-                    <Markdown escapeHtml={false} source ={this.state.course.description} />
+                    <Markdown escapeHtml={false} source ={this.state.course? this.state.course.description : ""} />
                 </div>
             </div>
 
@@ -150,7 +142,7 @@ export default class CourseDetail extends Component {
                 <ul className="course--stats--list">
                     <li className="course--stats--list--item">
                     <h4>Estimated Time</h4>
-                    <h3>{this.state.course.estimatedTime}</h3>
+                    <h3>{this.state.course ? this.state.course.estimatedTime : ""}</h3>
                     </li>
                     <li className="course--stats--list--item">
                     <h4>Materials Needed</h4>
