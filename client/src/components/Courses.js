@@ -14,7 +14,7 @@ export default class Courses extends Component {
       this.setState({
         courses:response.data
       });
-      console.log(response.data);
+      //console.log(response.data);
     })
     .catch(error => {
         if(error.response.status ===500){
