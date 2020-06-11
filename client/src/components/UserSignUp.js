@@ -98,6 +98,9 @@ export default class UserSignUp extends Component {
 
   createUser= async()=>{
     const { context } = this.props;
+    this.setState({ 
+      errors:  []
+  });
     if(this.state.password === this.state.confirmPassword){
         await axios.post(`http://localhost:5000/api/users`,{
             firstName: this.state.firstName,
@@ -115,30 +118,32 @@ export default class UserSignUp extends Component {
             });
             //console.log('Error creating user', error.response.data.errors);
         });
-        context.actions.signIn(this.state.emailAddress,this.state.password)
-        .then(user => {
-            //console.log("User: " +user.data);
-            //console.log("password: " + context.password);
-            if(user.data == null){
-                //console.log('Sign-in was unsuccessful');
-                this.setState(() => {
-                  return { errors: [ 'Sign-in was unsuccessful' ] };
-                });
-            }
-            else{
-                this.props.history.goBack();
-            }
-        })
-        
-        .catch(error => {
-            if(error.response.status ===500){
-                this.props.history.push("/error");
-            }
-            //errorArray.push(error.response.data.message);
-            this.setState({ 
-              errors:  error.response.data.message
+        //console.log(this.state.errors.length);
+        if(this.state.errors.length ===0){
+          context.actions.signIn(this.state.emailAddress,this.state.password)
+          .then(user => {
+              //console.log("User: " +user.data);
+              //console.log("password: " + context.password);
+              if(user.data == null){
+                  //console.log('Sign-in was unsuccessful');
+                  this.setState(() => {
+                    return { errors: [ 'Sign-in was unsuccessful' ] };
+                  });
+              }
+              else{
+                  this.props.history.goBack();
+              }
+          })
+          .catch(error => {
+              if(error.response.status ===500){
+                  this.props.history.push("/error");
+              }
+              //errorArray.push(error.response.data.message);
+              this.setState({ 
+                errors:  error.response.data.message
+            });
           });
-        });
+      }
 
   }
   else{
