@@ -105,11 +105,6 @@ export default class UserSignUp extends Component {
             emailAddress: this.state.emailAddress,
             password: this.state.password,
         })
-        //.then(response => {
-            //console.log(response);
-            //context.actions.signIn(this.state.emailAddress,this.state.password);
-            //this.props.history.goBack();
-        //})
         .catch(error => {
           //console.log('Error creating user', error.response.data.errors);
             if(error.response.status ===500){
