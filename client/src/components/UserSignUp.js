@@ -97,6 +97,7 @@ export default class UserSignUp extends Component {
   }
 
   createUser= async()=>{
+    const { context } = this.props;
     if(this.state.password === this.state.confirmPassword){
         await axios.post(`http://localhost:5000/api/users`,{
             firstName: this.state.firstName,
@@ -104,11 +105,13 @@ export default class UserSignUp extends Component {
             emailAddress: this.state.emailAddress,
             password: this.state.password,
         })
-        .then(response => {
+        //.then(response => {
             //console.log(response);
-            this.props.history.goBack();
-        })
+            //context.actions.signIn(this.state.emailAddress,this.state.password);
+            //this.props.history.goBack();
+        //})
         .catch(error => {
+          //console.log('Error creating user', error.response.data.errors);
             if(error.response.status ===500){
                 this.props.history.push("/error");
             }
@@ -117,6 +120,31 @@ export default class UserSignUp extends Component {
             });
             //console.log('Error creating user', error.response.data.errors);
         });
+        context.actions.signIn(this.state.emailAddress,this.state.password)
+        .then(user => {
+            //console.log("User: " +user.data);
+            //console.log("password: " + context.password);
+            if(user.data == null){
+                //console.log('Sign-in was unsuccessful');
+                this.setState(() => {
+                  return { errors: [ 'Sign-in was unsuccessful' ] };
+                });
+            }
+            else{
+                this.props.history.goBack();
+            }
+        })
+        
+        .catch(error => {
+            if(error.response.status ===500){
+                this.props.history.push("/error");
+            }
+            //errorArray.push(error.response.data.message);
+            this.setState({ 
+              errors:  error.response.data.message
+          });
+        });
+
   }
   else{
       //console.error("Passwords doesn't match");

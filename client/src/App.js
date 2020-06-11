@@ -35,6 +35,7 @@ const CreateCourseWithContext = withContext(CreateCourse);
 const UpdateCourseWithContext = withContext(UpdateCourse);
 const HeaderWithContext = withContext(Header);
 const UserSignOutWithContext = withContext (UserSignOut);
+const UserSignUpWithContext = withContext(UserSignUp);
 
 
 class App extends Component{
@@ -50,7 +51,7 @@ class App extends Component{
           <Route exact path="/courses/:id" component={CourseDetailWithContext} />
           <PrivateRoute path="/courses/:id/update" component={UpdateCourseWithContext} />
           <Route path="/signin" component={UserSignInWithContext} />
-          <Route path="/signup" component={UserSignUp} />
+          <Route path="/signup" component={UserSignUpWithContext} />
           <Route path="/signout" component={UserSignOutWithContext} />
           <Route path = "/forbidden" component={Forbidden} />
           <Route path = "/error" component={UnhandledError} />
